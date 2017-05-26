@@ -43,5 +43,6 @@ def load_doodles(word, path):
     doodles = []
     filepath = path + word + ".bin"
     for doodle in unpack_drawings(filepath):
-        doodles.append(doodle)
+        if doodle["recognized"] == 1:
+            doodles.append(doodle)
     return doodles

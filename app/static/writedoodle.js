@@ -11,23 +11,34 @@ console.log(ctx);
 var i=0;
 var prev;
 var words = [];
-var doodle_count = 0;
+var doodle_count = -1;
 var currentWord = "";
 
 function draw_doodle(vertices){
-    ctx.lineWidth = 5;
+
+    ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.moveTo(vertices[0].x+doodle_count*256, vertices[0].y);
-    vertices.forEach(function(pt){
+    var i = 0;
+    var interval = setInterval(function(){
+        var pt = vertices[i];
+
+        var prevPt = vertices[i > 0 ? i - 1 : 0];
+        ctx.moveTo(prevPt.x+doodle_count*256, prevPt.y)
         ctx.lineTo(pt.x+doodle_count*256, pt.y);
-    })
-    ctx.stroke();
+        ctx.stroke();
+        i ++;
+        if(i >= vertices.length){
+            clearInterval(interval);
+        }
+    }, 40);
 }
 
 function findDoodle(currentWord){
     $.get('/api/find_doodle/'+currentWord, function(response){
+    doodle_count+=1;
 
-        console.log(response.image)
+        console.log(response)
         response.image.forEach(function(el){
             vertices = [];
             for (var i=0; i < el[0].length; i++){
@@ -38,7 +49,6 @@ function findDoodle(currentWord){
                 }
             draw_doodle(vertices);
         });
-    doodle_count+=1;
     })
 }
 
@@ -46,7 +56,7 @@ function findDoodle(currentWord){
 $('body').on('keydown', function(t){
     console.log(t.keyCode);
 
-    if (t.keyCode>=65 && t.keyCode<=90){
+    if ((t.keyCode>=65 && t.keyCode<=90) || t.keyCode ===32){
         ctx.fillText(t.key,10*i,20);
         i+=1;
         console.log(i);
@@ -54,7 +64,7 @@ $('body').on('keydown', function(t){
         currentWord+=t.key;
     }
 
-    if (t.keyCode===32){
+    if (t.keyCode===13){
         console.log("this is the word: " + currentWord);
         words.push(currentWord);
         findDoodle(currentWord);
