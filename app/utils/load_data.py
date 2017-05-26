@@ -1,5 +1,6 @@
 import struct
 from struct import unpack
+import random
 
 
 def unpack_drawing(file_handle):
@@ -28,9 +29,12 @@ def unpack_drawing(file_handle):
 
 def unpack_drawings(filename):
     with open(filename, 'rb') as f:
-        while True:
+        i = 0
+        end = random.randint(0,20000)
+        while i < end:
             try:
                 yield unpack_drawing(f)
+                i += 1
             except struct.error:
                 break
 

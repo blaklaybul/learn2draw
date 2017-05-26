@@ -11,11 +11,34 @@ console.log(ctx);
 var i=0;
 var prev;
 var words = [];
+var doodle_count = 0;
 var currentWord = "";
+
+function draw_doodle(vertices){
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(vertices[0].x+doodle_count*256, vertices[0].y);
+    vertices.forEach(function(pt){
+        ctx.lineTo(pt.x+doodle_count*256, pt.y);
+    })
+    ctx.stroke();
+}
 
 function findDoodle(currentWord){
     $.get('/api/find_doodle/'+currentWord, function(response){
-        console.log(response);
+
+        console.log(response.image)
+        response.image.forEach(function(el){
+            vertices = [];
+            for (var i=0; i < el[0].length; i++){
+                vertices.push({
+                        x: el[0][i],
+                        y: el[1][i]
+                    })
+                }
+            draw_doodle(vertices);
+        });
+    doodle_count+=1;
     })
 }
 

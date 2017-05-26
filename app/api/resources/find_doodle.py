@@ -16,6 +16,6 @@ class FindDoodle(Resource):
     def get(self, name):
         if name in words:
             doodles=load_doodles(name, data_dir+"/data/binary/")
-            return doodles[0]
+            return doodles[-1]
         else:
             return 'not in db'
